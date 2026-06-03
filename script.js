@@ -10,7 +10,7 @@
     const MOBILE_MODES = {
         beginner: { rows: 9, cols: 9, mines: 10 },
         intermediate: { rows: 16, cols: 16, mines: 40 },
-        expert: { rows: 30, cols: 16, mines: 99 }
+        expert: { rows: 22, cols: 16, mines: 75 }
     };
 
     let currentMode = 'beginner';
@@ -43,17 +43,6 @@
     function detectMobile() {
         isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
         mobileControls.style.display = isMobile ? 'flex' : 'none';
-        updateModeLabels();
-    }
-
-    function updateModeLabels() {
-        var modes = isMobile ? MOBILE_MODES : MODES;
-        document.querySelectorAll('.mode-btn').forEach(function(btn) {
-            var m = modes[btn.dataset.mode];
-            if (m) {
-                btn.textContent = m.cols + '×' + m.rows;
-            }
-        });
     }
 
     function initGame() {
