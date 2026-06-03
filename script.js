@@ -9,8 +9,8 @@
 
     const MOBILE_MODES = {
         beginner: { rows: 9, cols: 9, mines: 10 },
-        intermediate: { rows: 15, cols: 15, mines: 35 },
-        expert: { rows: 19, cols: 14, mines: 55 }
+        intermediate: { rows: 14, cols: 13, mines: 28 },
+        expert: { rows: 18, cols: 13, mines: 48 }
     };
 
     let currentMode = 'beginner';
