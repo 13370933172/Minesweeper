@@ -104,18 +104,20 @@
         var maxWidth, maxHeight, cellSize, cellFontSize;
 
         if (isMobile) {
-            maxWidth = window.innerWidth - 20;
-            maxHeight = window.innerHeight - 160;
+            maxWidth = window.innerWidth - 14;
+            maxHeight = window.innerHeight - 150;
             var idealW = Math.floor(maxWidth / cols);
             var idealH = Math.floor(maxHeight / rows);
-            cellSize = Math.min(36, idealW, idealH);
+            cellSize = Math.min(48, idealW, idealH);
         } else {
             maxWidth = window.innerWidth - 40;
             cellSize = Math.min(36, Math.floor((maxWidth - 200) / cols));
             cellSize = Math.max(28, cellSize);
         }
 
-        if (cellSize >= 30) {
+        if (cellSize >= 40) {
+            cellFontSize = 18;
+        } else if (cellSize >= 30) {
             cellFontSize = 16;
         } else if (cellSize >= 26) {
             cellFontSize = 14;

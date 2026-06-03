@@ -267,7 +267,7 @@ body {
     .game-wrapper {
         border: none;
         box-shadow: none;
-        padding: 8px;
+        padding: 4px;
         width: 100%;
         max-width: 100vw;
         display: flex;
@@ -323,7 +323,7 @@ body {
 
 @media (max-width: 480px) {
     .game-wrapper {
-        padding: 6px;
+        padding: 2px;
     }
 
     .header {
