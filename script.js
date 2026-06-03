@@ -104,11 +104,8 @@
         var maxWidth, maxHeight, cellSize, cellFontSize;
 
         if (isMobile) {
-            maxWidth = window.innerWidth - 14;
-            maxHeight = window.innerHeight - 150;
-            var idealW = Math.floor(maxWidth / cols);
-            var idealH = Math.floor(maxHeight / rows);
-            cellSize = Math.min(48, idealW, idealH);
+            maxWidth = window.innerWidth - 10;
+            cellSize = Math.min(48, maxWidth / cols);
         } else {
             maxWidth = window.innerWidth - 40;
             cellSize = Math.min(36, Math.floor((maxWidth - 200) / cols));
