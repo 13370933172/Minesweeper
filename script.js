@@ -23,6 +23,7 @@
     let timerInterval = null;
     let elapsedSeconds = 0;
     let flagMode = false;
+    let cheatMode = false;
     let remainingMines = 0;
     let revealedCount = 0;
     let longPressTimer = null;
@@ -39,6 +40,7 @@
     const faceBtn = document.getElementById('faceBtn');
     const flagToggle = document.getElementById('flagToggle');
     const mobileControls = document.getElementById('mobileControls');
+    const cheatBtn = document.getElementById('cheatBtn');
 
     function detectMobile() {
         isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
@@ -59,6 +61,7 @@
         remainingMines = totalMines;
         revealedCount = 0;
         flagMode = false;
+        cheatMode = false;
         lastTapTime = 0;
 
         if (timerInterval) {
@@ -71,6 +74,7 @@
         faceBtn.textContent = '😊';
         flagToggle.classList.remove('active');
         flagToggle.textContent = '🚩 标记模式';
+        cheatBtn.classList.remove('active');
 
         for (let r = 0; r < rows; r++) {
             board[r] = [];
@@ -227,6 +231,32 @@
         }
 
         updateAllCells();
+        updateCheatMode();
+    }
+
+    function updateCheatMode() {
+        for (var r = 0; r < rows; r++) {
+            for (var c = 0; c < cols; c++) {
+                var cellEl = getCellEl(r, c);
+                if (!cellEl) continue;
+                if (board[r][c].mine && !board[r][c].revealed) {
+                    if (cheatMode) {
+                        cellEl.classList.add('cheat-mine');
+                        cellEl.querySelector('.cell-content').textContent = '💣';
+                    } else {
+                        cellEl.classList.remove('cheat-mine');
+                        var content = cellEl.querySelector('.cell-content');
+                        if (board[r][c].flagged) {
+                            content.textContent = '🚩';
+                        } else if (gameOver && board[r][c].mine) {
+                            content.textContent = '💣';
+                        } else {
+                            content.textContent = '';
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function getCellEl(r, c) {
@@ -613,6 +643,13 @@
             flagToggle.classList.remove('active');
             flagToggle.textContent = '🚩 标记模式';
         }
+    });
+
+    cheatBtn.addEventListener('click', function() {
+        if (gameOver) cheatMode = false;
+        else cheatMode = !cheatMode;
+        cheatBtn.classList.toggle('active', cheatMode);
+        updateCheatMode();
     });
 
     faceBtn.addEventListener('click', resetGame);

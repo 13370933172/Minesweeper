@@ -135,6 +135,39 @@ body {
     background: #d0d0d0;
 }
 
+.cheat-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.cheat-btn {
+    padding: 4px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    background: var(--bg);
+    border-top: 2px solid var(--border-light);
+    border-left: 2px solid var(--border-light);
+    border-right: 2px solid var(--border-darker);
+    border-bottom: 2px solid var(--border-darker);
+    font-family: inherit;
+    color: #222;
+}
+
+.cheat-btn:active,
+.cheat-btn.active {
+    border-top: 2px solid var(--border-darker);
+    border-left: 2px solid var(--border-darker);
+    border-right: 2px solid var(--border-light);
+    border-bottom: 2px solid var(--border-light);
+    background: #ff6666;
+}
+
+.cell.cheat-mine {
+    background: #ff9999;
+    border-color: #cc6666;
+}
+
 .board {
     display: grid;
     gap: 0;
