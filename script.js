@@ -24,6 +24,7 @@
     let elapsedSeconds = 0;
     let flagMode = false;
     let cheatMode = false;
+    let quickFlagMode = false;
     let remainingMines = 0;
     let revealedCount = 0;
     let longPressTimer = null;
@@ -41,6 +42,7 @@
     const flagToggle = document.getElementById('flagToggle');
     const mobileControls = document.getElementById('mobileControls');
     const cheatBtn = document.getElementById('cheatBtn');
+    const quickFlagBtn = document.getElementById('quickFlagBtn');
 
     function detectMobile() {
         isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches;
@@ -62,6 +64,7 @@
         revealedCount = 0;
         flagMode = false;
         cheatMode = false;
+        quickFlagMode = false;
         lastTapTime = 0;
 
         if (timerInterval) {
@@ -75,6 +78,7 @@
         flagToggle.classList.remove('active');
         flagToggle.textContent = '🚩 标记模式';
         cheatBtn.classList.remove('active');
+        quickFlagBtn.classList.remove('active');
 
         for (let r = 0; r < rows; r++) {
             board[r] = [];
@@ -317,6 +321,11 @@
         }
         if (isMobile && longPressTriggered) return;
 
+        if (quickFlagMode && board[r][c].revealed && board[r][c].adjacentMines > 0) {
+            quickFlag(r, c);
+            return;
+        }
+
         reveal(r, c);
     }
 
@@ -374,17 +383,23 @@
         }
 
         if (board[r][c].revealed && board[r][c].adjacentMines > 0) {
-            var now = Date.now();
-            if (r === lastTapRow && c === lastTapCol && (now - lastTapTime) < DOUBLE_TAP_DELAY) {
+            if (quickFlagMode) {
                 clearChordHighlight();
-                chord(r, c);
+                quickFlag(r, c);
                 lastTapTime = 0;
             } else {
-                clearChordHighlight();
-                highlightAdjacent(r, c);
-                lastTapTime = now;
-                lastTapRow = r;
-                lastTapCol = c;
+                var now = Date.now();
+                if (r === lastTapRow && c === lastTapCol && (now - lastTapTime) < DOUBLE_TAP_DELAY) {
+                    clearChordHighlight();
+                    chord(r, c);
+                    lastTapTime = 0;
+                } else {
+                    clearChordHighlight();
+                    highlightAdjacent(r, c);
+                    lastTapTime = now;
+                    lastTapRow = r;
+                    lastTapCol = c;
+                }
             }
         } else {
             clearChordHighlight();
@@ -425,6 +440,43 @@
 
         updateMineCounter();
         updateCellDisplay(r, c);
+    }
+
+    function quickFlag(r, c) {
+        var num = board[r][c].adjacentMines;
+        if (num <= 0) return;
+
+        var dr = [-1, -1, -1, 0, 0, 1, 1, 1];
+        var dc = [-1, 0, 1, -1, 1, -1, 0, 1];
+        var candidates = [];
+        var flaggedCount = 0;
+
+        for (var i = 0; i < 8; i++) {
+            var nr = r + dr[i];
+            var nc = c + dc[i];
+            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
+                if (board[nr][nc].revealed) continue;
+                if (board[nr][nc].flagged) {
+                    flaggedCount++;
+                } else {
+                    candidates.push({ r: nr, c: nc });
+                }
+            }
+        }
+
+        if (flaggedCount > num) return;
+        if (candidates.length === 0) return;
+        if (candidates.length + flaggedCount !== num) return;
+
+        for (var j = 0; j < candidates.length; j++) {
+            var cell = candidates[j];
+            board[cell.r][cell.c].flagged = true;
+            board[cell.r][cell.c].questioned = false;
+            remainingMines--;
+            updateCellDisplay(cell.r, cell.c);
+        }
+
+        updateMineCounter();
     }
 
     function reveal(r, c) {
@@ -650,6 +702,11 @@
         else cheatMode = !cheatMode;
         cheatBtn.classList.toggle('active', cheatMode);
         updateCheatMode();
+    });
+
+    quickFlagBtn.addEventListener('click', function() {
+        quickFlagMode = !quickFlagMode;
+        quickFlagBtn.classList.toggle('active', quickFlagMode);
     });
 
     faceBtn.addEventListener('click', resetGame);
