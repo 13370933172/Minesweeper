@@ -321,6 +321,10 @@
         }
         if (isMobile && longPressTriggered) return;
 
+        if (isMobile && board[r][c].revealed && board[r][c].adjacentMines > 0) {
+            return;
+        }
+
         if (quickFlagMode && board[r][c].revealed && board[r][c].adjacentMines > 0) {
             quickFlag(r, c);
             return;
@@ -383,23 +387,21 @@
         }
 
         if (board[r][c].revealed && board[r][c].adjacentMines > 0) {
-            if (quickFlagMode) {
+            var now = Date.now();
+            if (r === lastTapRow && c === lastTapCol && (now - lastTapTime) < DOUBLE_TAP_DELAY) {
                 clearChordHighlight();
-                quickFlag(r, c);
+                if (quickFlagMode) {
+                    quickFlag(r, c);
+                } else {
+                    chord(r, c);
+                }
                 lastTapTime = 0;
             } else {
-                var now = Date.now();
-                if (r === lastTapRow && c === lastTapCol && (now - lastTapTime) < DOUBLE_TAP_DELAY) {
-                    clearChordHighlight();
-                    chord(r, c);
-                    lastTapTime = 0;
-                } else {
-                    clearChordHighlight();
-                    highlightAdjacent(r, c);
-                    lastTapTime = now;
-                    lastTapRow = r;
-                    lastTapCol = c;
-                }
+                clearChordHighlight();
+                highlightAdjacent(r, c);
+                lastTapTime = now;
+                lastTapRow = r;
+                lastTapCol = c;
             }
         } else {
             clearChordHighlight();
@@ -444,7 +446,7 @@
 
     function quickFlag(r, c) {
         var num = board[r][c].adjacentMines;
-        if (num <= 0) return;
+        if (num <= 0) return false;
 
         var dr = [-1, -1, -1, 0, 0, 1, 1, 1];
         var dc = [-1, 0, 1, -1, 1, -1, 0, 1];
@@ -464,9 +466,13 @@
             }
         }
 
-        if (flaggedCount > num) return;
-        if (candidates.length === 0) return;
-        if (candidates.length + flaggedCount !== num) return;
+        if (flaggedCount > num) return false;
+        if (flaggedCount === num) {
+            chord(r, c);
+            return true;
+        }
+        if (candidates.length === 0) return false;
+        if (candidates.length + flaggedCount !== num) return false;
 
         for (var j = 0; j < candidates.length; j++) {
             var cell = candidates[j];
@@ -477,6 +483,7 @@
         }
 
         updateMineCounter();
+        return true;
     }
 
     function reveal(r, c) {
