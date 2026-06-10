@@ -1,38 +1,56 @@
 <!DOCTYPE html>
+<!-- 扫雷 Minesweeper - 经典 Windows 扫雷的纯前端实现 -->
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <!-- user-scalable=no 禁止双击缩放，消除移动端 300ms 点击延迟 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>扫雷 - Minesweeper</title>
+    <!-- iOS Safari 添加到主屏幕时全屏显示 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- iOS 状态栏样式：黑色半透明 -->
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- 浏览器标签页图标 -->
     <link rel="icon" href="icon.png">
+    <!-- iOS 主屏幕图标（180×180 PNG） -->
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- 外层容器：居中布局 -->
     <div class="container">
+        <!-- 游戏窗口：模拟 Windows 3D 边框 -->
         <div class="game-wrapper">
+            <!-- 顶部信息栏：雷数 / 表情 / 计时器 -->
             <div class="header">
                 <div class="mine-counter" id="mineCounter">000</div>
                 <button class="face-btn" id="faceBtn">😊</button>
                 <div class="timer" id="timer">000</div>
             </div>
+
+            <!-- 难度选择器 -->
             <div class="mode-selector">
                 <button class="mode-btn active" data-mode="beginner">初级</button>
                 <button class="mode-btn" data-mode="intermediate">中级</button>
                 <button class="mode-btn" data-mode="expert">高级</button>
             </div>
+
+            <!-- 辅助功能栏：透视 / 快速标记 -->
             <div class="cheat-bar">
                 <button class="cheat-btn" id="cheatBtn">👁 透视</button>
                 <button class="cheat-btn" id="quickFlagBtn">⚡ 快速标记</button>
             </div>
+
+            <!-- CSS Grid 棋盘容器，由 JS 动态生成格子 -->
             <div class="board" id="board"></div>
+
+            <!-- 移动端专用：标记模式切换按钮（桌面端自动隐藏） -->
             <div class="mobile-controls" id="mobileControls">
                 <button class="flag-toggle" id="flagToggle">🚩 标记模式</button>
             </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
